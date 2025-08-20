@@ -98,9 +98,9 @@
             flex: 1;
             padding: 15px;
             overflow-y: auto;
+            overflow-x: hidden;
             background: white;
-            min-height: 250px;
-            max-height: 350px;
+            height: 350px;
             scroll-behavior: smooth;
         }
         
@@ -428,14 +428,10 @@
             messageDiv.appendChild(messageContent);
             messagesContainer.appendChild(messageDiv);
             
-            // Ensure the new message is visible by scrolling to bottom
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
-            // Also ensure the input area remains visible
-            const inputArea = document.querySelector('.chat-input-area');
-            if (inputArea) {
-                inputArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
+            // Force scroll to bottom
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
             
             conversationHistory.push({sender, content});
         }
@@ -598,20 +594,6 @@
             
             // Focus on input when page loads
             chatInput.focus();
-            
-            // Auto-scroll chat to bottom when new content is added
-            const observer = new MutationObserver(function() {
-                const chatMessages = document.getElementById('chatMessages');
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            });
-            
-            const chatMessages = document.getElementById('chatMessages');
-            if (chatMessages) {
-                observer.observe(chatMessages, {
-                    childList: true,
-                    subtree: true
-                });
-            }
         });
     </script>
 </body>
