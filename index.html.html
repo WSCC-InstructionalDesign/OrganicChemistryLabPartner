@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Organic Chemistry Lab Partner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #2c3e50;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 900px;
+            height: 700px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid #34495e;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .bot-avatar {
+            width: 60px;
+            height: 60px;
+            background: #3498db;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .bot-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .bot-description {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+        }
+        
+        .info-panel {
+            background: #ecf0f1;
+            border-bottom: 2px solid #34495e;
+            padding: 20px;
+        }
+        
+        .info-title {
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .info-text {
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            background: white;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .message.user .message-avatar {
+            background: #2c3e50;
+            color: white;
+        }
+        
+        .message-content {
+            background: #f8f9fa;
+            padding: 15px 18px;
+            border-radius: 18px;
+            max-width: 75%;
+            line-height: 1.5;
+            color: #2c3e50;
+            border: 1px solid #dee2e6;
+        }
+        
+        .message.user .message-content {
+            background: #2c3e50;
+            color: white;
+            border: 1px solid #2c3e50;
+        }
+        
+        .chat-input-area {
+            padding: 25px;
+            background: white;
+            border-top: 1px solid #e1e8ed;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .chat-input {
+            flex: 1;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            padding: 15px 20px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        
+        .chat-input:focus {
+            border-color: #3498db;
+        }
+        
+        .send-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .send-button:hover {
+            background: #2980b9;
+        }
+        
+        .quick-topics {
+            margin-bottom: 20px;
+        }
+        
+        .topics-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+        
+        .topic-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .topic-btn {
+            background: #ecf0f1;
+            border: 2px solid #34495e;
+            color: #2c3e50;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .topic-btn:hover {
+            background: #34495e;
+            color: white;
+        }
+        
+        .chemical-formula {
+            background: #2c3e50;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        .reference-data {
+            background: #f8f9fa;
+            border: 2px solid #34495e;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .reference-title {
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .data-table th {
+            background: #34495e;
+            color: white;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                height: 90vh;
+            }
+            
+            .topic-buttons {
+                flex-direction: column;
+            }
+            
+            .topic-btn {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="bot-avatar">🧪</div>
+            <div class="bot-name">Dr. OrganicBot</div>
+            <div class="bot-description">Your AI Lab Partner for Organic Chemistry Distillation</div>
+        </div>
+        
+        <div class="chat-container">
+            <div class="info-panel">
+                <div class="info-title">🎯 How I Help You Learn</div>
+                <div class="info-text">
+                    I know organic chemistry well and I'm here to guide your thinking! Ask me about molecular structures, 
+                    intermolecular forces, distillation techniques, or anything related to your lab. I'll ask you questions 
+                    to help you discover the answers rather than just telling you what to think.
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message">
+                    <div class="message-avatar">🧪</div>
+                    <div class="message-content">
+                        Hi! I'm your AI lab partner for the distillation experiment. I'm here to help you understand the organic chemistry behind what you're doing.
+                        <br><br>
+                        You can ask me about:
+                        <br>• Molecular structures and properties
+                        <br>• Why compounds have different boiling points  
+                        <br>• Distillation techniques and observations
+                        <br>• Raoult's Law and vapor pressure
+                        <br>• Data analysis and error sources
+                        <br><br>
+                        What would you like to explore first?
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-topics">
+                <div class="topics-title">Quick Start Topics:</div>
+                <div class="topic-buttons">
+                    <button class="topic-btn" onclick="askAbout('Why do ethyl acetate and trans-1,2-dibenzoylethylene have such different boiling points?')">Boiling Point Differences</button>
+                    <button class="topic-btn" onclick="askAbout('What intermolecular forces affect distillation?')">Intermolecular Forces</button>
+                    <button class="topic-btn" onclick="askAbout('How does Raoult\\'s Law apply to my distillation?')">Raoult's Law</button>
+                    <button class="topic-btn" onclick="askAbout('What should I observe during distillation?')">Experimental Observations</button>
+                    <button class="topic-btn" onclick="askAbout('How do I analyze my physical property data?')">Data Analysis</button>
+                    <button class="topic-btn" onclick="askAbout('When should I use simple vs fractional distillation?')">Distillation Methods</button>
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <div class="input-container">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Ask me about molecular structure, distillation, or any organic chemistry concept..." />
+                    <button class="send-button" onclick="sendMessage()">→</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let conversationHistory = [];
+        
+        // AI Lab Partner Knowledge Base
+        const organicChemistryKnowledge = {
+            boilingPoints: {
+                factors: ["molecular weight", "intermolecular forces", "molecular shape", "polarity"],
+                guide: "What molecular features do you think would make it harder for molecules to escape from the liquid phase?"
+            },
+            intermolecularForces: {
+                types: ["van der Waals", "dipole-dipole", "hydrogen bonding", "π-π stacking"],
+                guide: "Looking at the molecular structures, what types of intermolecular interactions do you see?"
+            },
+            distillationPrinciples: {
+                concepts: ["vapor pressure", "Raoult's Law", "vapor-liquid equilibrium"],
+                guide: "How do you think vapor pressure relates to what distills first?"
+            },
+            experimentalTips: {
+                observations: ["temperature behavior", "drop rate", "color changes", "clarity"],
+                guide: "What does the temperature behavior tell you about the purity of what's distilling?"
+            }
+        };
+        
+        function askAbout(question) {
+            document.getElementById('chatInput').value = question;
+            sendMessage();
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage(message, 'user');
+                input.value = '';
+                
+                // Generate AI response
+                setTimeout(() => {
+                    const response = generateResponse(message);
+                    addMessage(response, 'bot');
+                }, 800);
+            }
+        }
+        
+        function addMessage(content, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = sender === 'user' ? 'You' : '🧪';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.innerHTML = content;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            messagesContainer.appendChild(messageDiv);
+            
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            conversationHistory.push({sender, content});
+        }
+        
+        function generateResponse(userMessage) {
+            const msg = userMessage.toLowerCase();
+            
+            // Boiling point questions
+            if (msg.includes('boiling point') || msg.includes('77') || msg.includes('350') || msg.includes('ethyl acetate')) {
+                return `Great question about boiling points! Let me guide your thinking here.
+                
+                <div class="reference-data">
+                    <div class="reference-title">Compare These Structures:</div>
+                    Ethyl acetate: <span class="chemical-formula">CH₃COOCH₂CH₃</span> (bp 77°C)<br>
+                    trans-1,2-Dibenzoylethylene: <span class="chemical-formula">C₆H₅CO-CH=CH-COC₆H₅</span> (bp 350°C)
+                </div>
+                
+                What do you notice about the size and complexity of these molecules? How do you think molecular size affects the strength of intermolecular forces?
+                
+                Think about it: What has to happen at the molecular level for a liquid to boil?`;
+            }
+            
+            // Intermolecular forces
+            if (msg.includes('intermolecular') || msg.includes('forces') || msg.includes('van der waals') || msg.includes('dipole')) {
+                return `Excellent question about intermolecular forces! These are key to understanding distillation.
+                
+                Looking at your compounds, what types of intermolecular forces do you think are present?
+                
+                <div class="reference-data">
+                    <div class="reference-title">Consider These Force Types:</div>
+                    • Van der Waals (dispersion) - all molecules have these<br>
+                    • Dipole-dipole - polar molecules<br>  
+                    • Hydrogen bonding - H attached to N, O, or F<br>
+                    • π-π stacking - aromatic rings
+                </div>
+                
+                Which molecule do you think has stronger intermolecular forces overall? How would that affect how much energy is needed to make it boil?`;
+            }
+            
+            // Raoult's Law
+            if (msg.includes('raoult') || msg.includes('vapor pressure') || msg.includes('law')) {
+                return `Great question about Raoult's Law! This is fundamental to understanding distillation behavior.
+                
+                <div class="reference-data">
+                    <div class="reference-title">Raoult's Law:</div>
+                    P<sub>total</sub> = X<sub>A</sub> × P°<sub>A</sub> + X<sub>B</sub> × P°<sub>B</sub>
+                </div>
+                
+                What do you think each term in this equation represents? 
+                
+                Here's a thought experiment: If you have a mixture of two liquids with very different vapor pressures, which one would you expect to dominate the vapor phase above the liquid?
+                
+                How does this connect to what distills first in your experiment?`;
+            }
+            
+            // Experimental observations
+            if (msg.includes('observe') || msg.includes('temperature') || msg.includes('distill') || msg.includes('drops')) {
+                return `Great question about experimental observations! This is where theory meets practice.
+                
+                <div class="reference-data">
+                    <div class="reference-title">Key Things to Watch:</div>
+                    • Temperature stability vs. fluctuation<br>
+                    • Rate of condensation (drops per minute)<br>
+                    • Physical appearance of distillate<br>
+                    • Any color or clarity changes
+                </div>
+                
+                What do you think it means if your temperature:
+                • Stays steady at 77°C for a while?
+                • Jumps around between 80-90°C?
+                • Gradually rises from 77°C to 85°C?
+                
+                How would each scenario relate to the purity of what's distilling?`;
+            }
+            
+            // Data analysis
+            if (msg.includes('data') || msg.includes('error') || msg.includes('refractive') || msg.includes('density')) {
+                return `Excellent question about data analysis! Your measurements tell a story about your separation quality.
+                
+                <div class="reference-data">
+                    <div class="reference-title">Physical Properties to Compare:</div>
+                    <table class="data-table">
+                        <tr><th>Property</th><th>Ethyl Acetate</th><th>Meaning</th></tr>
+                        <tr><td>Boiling Point</td><td>77°C</td><td>Purity indicator</td></tr>
+                        <tr><td>Refractive Index</td><td>1.372</td><td>Molecular structure</td></tr>
+                        <tr><td>Density</td><td>0.902 g/mL</td><td>Molecular packing</td></tr>
+                    </table>
+                </div>
+                
+                How close are your measured values to literature values? What do you think causes differences?
+                
+                If your refractive index is higher than expected, what might that suggest about impurities?`;
+            }
+            
+            // Distillation methods
+            if (msg.includes('simple') || msg.includes('fractional') || msg.includes('method') || msg.includes('technique')) {
+                return `Great question about distillation methods! The choice depends on your specific separation challenge.
+                
+                <div class="reference-data">
+                    <div class="reference-title">Method Selection Guide:</div>
+                    • Simple distillation: bp difference >25°C<br>
+                    • Fractional distillation: bp difference <25°C<br>
+                    • Special techniques: azeotropes, heat-sensitive compounds
+                </div>
+                
+                For your ethyl acetate separation (bp difference ~270°C), which method makes sense?
+                
+                What do you think would happen if you tried to separate two compounds with boiling points only 5°C apart using simple distillation?
+                
+                How does the number of theoretical plates in a fractionating column relate to separation efficiency?`;
+            }
+            
+            // General chemistry guidance
+            if (msg.includes('help') || msg.includes('understand') || msg.includes('explain')) {
+                return `I'm here to help guide your thinking! What specific aspect would you like to explore?
+                
+                Try asking me about:
+                • "Why do these molecules have different boiling points?"
+                • "What intermolecular forces are involved?"
+                • "How do I interpret my experimental observations?"
+                • "What does my data tell me about separation efficiency?"
+                
+                What's on your mind with this experiment?`;
+            }
+            
+            // Default response for other questions
+            return `That's an interesting question! Let me ask you something to guide your thinking:
+            
+            What do you already know about this topic? And what specific aspect are you trying to understand better?
+            
+            I find it's helpful to start with the molecular level - how do you think the structure of your compounds relates to what you're observing?`;
+        }
+        
+        // Enter key functionality
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
