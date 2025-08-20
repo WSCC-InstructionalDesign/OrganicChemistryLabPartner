@@ -330,8 +330,12 @@
             
             <div class="chat-input-area">
                 <div class="input-container">
-                    <input type="text" class="chat-input" id="chatInput" placeholder="Ask me about molecular structure, distillation, or any organic chemistry concept..." />
-                    <button class="send-button" onclick="sendMessage()">→</button>
+                    <input type="text" 
+                           class="chat-input" 
+                           id="chatInput" 
+                           placeholder="Ask me about molecular structure, distillation, or any organic chemistry concept..."
+                           autocomplete="off" />
+                    <button class="send-button" type="button" aria-label="Send message">→</button>
                 </div>
             </div>
         </div>
@@ -359,11 +363,6 @@
                 guide: "What does the temperature behavior tell you about the purity of what's distilling?"
             }
         };
-        
-        function askAbout(question) {
-            document.getElementById('chatInput').value = question;
-            sendMessage();
-        }
         
         function sendMessage() {
             const input = document.getElementById('chatInput');
@@ -401,6 +400,12 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
             
             conversationHistory.push({sender, content});
+        }
+        
+        function askAbout(question) {
+            const input = document.getElementById('chatInput');
+            input.value = question;
+            sendMessage();
         }
         
         function generateResponse(userMessage) {
@@ -532,11 +537,27 @@
             I find it's helpful to start with the molecular level - how do you think the structure of your compounds relates to what you're observing?`;
         }
         
-        // Enter key functionality
-        document.getElementById('chatInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
+        // Enter key functionality and button click
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatInput = document.getElementById('chatInput');
+            const sendButton = document.querySelector('.send-button');
+            
+            // Enter key to send message
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // Click button to send message
+            sendButton.addEventListener('click', function(e) {
+                e.preventDefault();
                 sendMessage();
-            }
+            });
+            
+            // Focus on input when page loads
+            chatInput.focus();
         });
     </script>
 </body>
